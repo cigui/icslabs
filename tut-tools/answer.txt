@@ -1,0 +1,4 @@
+1.ps -u username -o cmd=
+2.grep '\<a' words | wc -w
+3.ls -rS *.conf | head -n5
+4.touch echo.sh; echo #!/bin/bash >> echo.sh; echo echo 'hello world!' >> echo.sh; chmod 777 echo.sh

@@ -1,0 +1,54 @@
+##################################################################
+# rsum.ys - Recursively sum the elements of a linked list.
+# Return the sum.
+#
+# name: Zhou Xin
+# ID: 515030910073
+#
+##################################################################
+.pos 0
+# Set up the stack structure and call sum_list
+init:
+       irmovl  Stack, %esp
+       irmovl  Stack, %ebp
+       jmp Main
+
+# Sample linked list
+.align 4
+ele1:  .long 0x00a
+       .long ele2
+ele2:  .long 0x0b0
+       .long ele3
+ele3:  .long 0xc00
+       .long 0
+
+Main:
+       irmovl  ele1, %eax
+       irmovl  $0x4, %edi
+       pushl   %eax
+       call    Rsum_list
+       halt
+# int rsum_list(list_ptr ls)
+Rsum_list:
+       pushl   %ebp
+       rrmovl  %esp, %ebp
+       pushl   %ebx
+       mrmovl  0x8(%ebp), %ebx
+       andl    %ebx, %ebx
+       je      End
+       mrmovl  4(%ebx), %eax
+       mrmovl  (%ebx), %ebx
+       pushl   %eax
+       call    Rsum_list
+       addl    %ebx, %eax
+       addl    %edi, %esp
+       popl    %ebx
+       popl    %ebp
+       ret
+End:
+       irmovl  $0x0, %eax
+       popl    %ebx
+       popl    %ebp
+       ret
+       .pos 0x100
+Stack:

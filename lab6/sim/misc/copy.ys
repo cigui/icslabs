@@ -1,0 +1,72 @@
+##################################################################
+# copy.ys - Copy a block of words from one part of memory to 
+# another area of memory, computing the checksum (Xor) of all the 
+# words copied.
+# Return the checksum.
+#
+# name: Zhou Xin
+# ID: 515030910073
+# 
+##################################################################
+.pos 0
+# Set up the stack structure and call sum_list
+init:
+        irmovl  Stack, %esp
+        irmovl  Stack, %ebp
+        jmp Main
+
+.align 4
+# Source block
+src:
+.long 0x00a
+.long 0x0b0
+.long 0xc00
+# Destination block
+dest:
+.long 0x111
+.long 0x222
+.long 0x333
+
+Main:
+        irmovl  $0x3,  %eax
+        pushl   %eax
+        irmovl  dest,  %eax
+        pushl   %eax
+        irmovl  src,   %eax
+        pushl   %eax
+        call    Copy_block
+        halt
+
+#int copy_block(int *src, int *dest, int len)
+Copy_block:
+        pushl   %ebp
+        rrmovl  %esp,  %ebp
+        pushl   %ebx
+        pushl   %edi
+        pushl   %esi
+        irmovl  $0x0,  %eax
+        mrmovl  0x8(%ebp), %ecx
+        mrmovl  0xc(%ebp), %edx
+        mrmovl  0x10(%ebp), %edi
+        andl    %edi,  %edi
+        je     Out
+
+Loop:
+        mrmovl  (%ecx), %esi
+        rmmovl  %esi, (%edx)
+        xorl    %esi,  %eax
+        irmovl  $0x4,  %esi
+        addl    %esi,  %ecx
+        addl    %esi,  %edx
+        irmovl  $0x1,  %esi
+        subl    %esi,  %edi
+        andl    %edi,  %edi
+        jne     Loop
+Out:
+        popl    %esi
+        popl    %edi
+        popl    %ebx
+        popl    %ebp
+        ret
+        .pos 0x100
+Stack:
